@@ -135,7 +135,7 @@ function App() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Mail size={16} />
-              <span>hello@jepixo.me</span>
+              <a href="mailto:admin@jepixo.in" style={{ color: 'inherit', textDecoration: 'none' }}>admin@jepixo.in</a>
             </div>
           </div>
         </div>
