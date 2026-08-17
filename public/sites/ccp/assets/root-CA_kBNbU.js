@@ -1,0 +1,12 @@
+import{G as e,j as t,n,o as r,q as i,s as a,t as o,u as s}from"./jsx-runtime-CEQG4uTB.js";import{r as c}from"./lib-ChXXg9J7.js";import{i as l,o as u,r as d}from"./errorBoundaries-C-gnJ1-M.js";var f=i(e(),1);function p(){let{hash:e,pathname:t}=s();(0,f.useEffect)(()=>{if(!e)return;let t=decodeURIComponent(e.slice(1)),n=0,r=()=>{let e=document.getElementById(t);if(e){e.scrollIntoView({behavior:`smooth`,block:`start`});return}n+=1,n<20&&setTimeout(r,50)};r()},[e,t])}var m=o(),h=()=>[{rel:`preconnect`,href:`https://fonts.googleapis.com`},{rel:`preconnect`,href:`https://fonts.gstatic.com`,crossOrigin:`anonymous`},{rel:`stylesheet`,href:`https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&display=swap`}];function g({children:e}){return(0,m.jsxs)(`html`,{lang:`en`,children:[(0,m.jsxs)(`head`,{children:[(0,m.jsx)(`meta`,{charSet:`utf-8`}),(0,m.jsx)(`meta`,{name:`viewport`,content:`width=device-width, initial-scale=1`}),(0,m.jsx)(`script`,{dangerouslySetInnerHTML:{__html:`(function (l) {
+              if (l.search[1] === "/") {
+                var decoded = l.search
+                  .slice(1)
+                  .split("&")
+                  .map(function (s) {
+                    return s.replace(/~and~/g, "&");
+                  })
+                  .join("?");
+                window.history.replaceState(null, "", l.pathname.slice(0, -1) + decoded + l.hash);
+              }
+            })(window.location);`}}),(0,m.jsx)(l,{}),(0,m.jsx)(d,{})]}),(0,m.jsxs)(`body`,{children:[e,(0,m.jsx)(c,{}),(0,m.jsx)(u,{})]})]})}var _=r(function(){return p(),(0,m.jsx)(n,{})}),v=a(function({error:e}){let n=`Oops!`,r=`An unexpected error occurred.`,i;return t(e)&&(n=e.status===404?`404`:`Error`,r=e.status===404?`The requested page could not be found.`:e.statusText||r),(0,m.jsxs)(`main`,{className:`pt-16 p-4 container mx-auto`,children:[(0,m.jsx)(`h1`,{children:n}),(0,m.jsx)(`p`,{children:r}),i]})});export{v as ErrorBoundary,g as Layout,_ as default,h as links};
