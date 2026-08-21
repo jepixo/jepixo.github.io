@@ -1,0 +1,1 @@
+import{o as e,t}from"./jsx-runtime-CUclnT8z.js";import{t as n}from"./MatchStrike-C_1NdwoF.js";var r=t(),i=e(function(){return(0,r.jsx)(n,{})});export{i as default};
