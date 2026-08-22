@@ -1,1 +1,0 @@
-var e={sans:`"Inter", ui-sans-serif, system-ui, sans-serif`,display:`"Espresso Dolce", "Chat Favour", ui-sans-serif, sans-serif`,menu:`"Chat Favour", "Inter", ui-sans-serif, sans-serif`,kiyosuna:`"Kiyosuna Sans", "Inter", ui-sans-serif, sans-serif`},t=e=>`/sites/ccp/${e.replace(/^\//,``)}`;export{e as n,t};
