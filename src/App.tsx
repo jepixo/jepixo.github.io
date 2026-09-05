@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useRef, useState } from 'react';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import {
     Github,
     ExternalLink,
@@ -13,6 +13,7 @@ import {
     Send,
 } from 'lucide-react';
 import Scene from './components/Scene';
+import TiltCard from './components/TiltCard';
 import { services, suiteUrl } from './data/services';
 import { products } from './data/products';
 import { caseStudies } from './data/caseStudies';
@@ -32,6 +33,14 @@ const staggerContainer = {
     },
 };
 
+/** Blur-in reveal used for section wrappers — more cinematic than a plain fade. */
+const sectionReveal = {
+    initial: { opacity: 0, y: 40, filter: 'blur(8px)' },
+    whileInView: { opacity: 1, y: 0, filter: 'blur(0px)' },
+    viewport: { once: true, margin: '-100px' } as const,
+    transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] as const },
+};
+
 const serviceIcons = [Globe, Palette, Video, Shirt];
 
 const statusLabel: Record<string, string> = {
@@ -43,6 +52,7 @@ const statusLabel: Record<string, string> = {
 function App() {
     const [problem, setProblem] = useState('');
     const [contact, setContact] = useState('');
+    const heroRef = useRef<HTMLElement>(null);
 
     const handleSubmitProblem = (e: React.FormEvent) => {
         e.preventDefault();
@@ -53,8 +63,20 @@ function App() {
         window.location.href = `mailto:admin@jepixo.in?subject=${subject}&body=${body}`;
     };
 
+    const { scrollYProgress } = useScroll();
+    const progressBarScale = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
+    const { scrollYProgress: heroProgress } = useScroll({
+        target: heroRef,
+        offset: ['start start', 'end start'],
+    });
+    const heroOpacity = useTransform(heroProgress, [0, 1], [1, 0]);
+    const heroY = useTransform(heroProgress, [0, 1], [0, 120]);
+
     return (
         <main className="app">
+            <motion.div className="scroll-progress" style={{ scaleX: progressBarScale }} />
+
             <Scene />
 
             <nav className="navbar">
@@ -81,56 +103,53 @@ function App() {
             </nav>
 
             {/* HERO */}
-            <section className="hero">
-                <motion.div
-                    variants={staggerContainer}
-                    initial="initial"
-                    animate="animate"
-                    className="hero-content"
-                >
-                    <motion.span variants={fadeIn} className="eyebrow">
-                        Jepixo &middot; Pune, India
-                    </motion.span>
-                    <motion.h1
-                        variants={fadeIn}
-                        className="gradient-text"
-                        style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.05 }}
+            <section className="hero" ref={heroRef}>
+                <motion.div style={{ opacity: heroOpacity, y: heroY }}>
+                    <motion.div
+                        variants={staggerContainer}
+                        initial="initial"
+                        animate="animate"
+                        className="hero-content"
                     >
-                        Whatever you need <span className="primary-gradient-text">built, sold,</span> or branded.
-                    </motion.h1>
-                    <motion.p
-                        variants={fadeIn}
-                        style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', maxWidth: '640px', margin: '24px auto' }}
-                    >
-                        Jepixo is a builder's studio out of Pune. One team, two branches — a services
-                        division that ships web, brand, and merch work, and a products division that
-                        builds software of its own.
-                    </motion.p>
-                    <motion.div variants={fadeIn} style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                        <button
-                            className="glass-card btn-primary"
-                            onClick={() => document.getElementById('suite')?.scrollIntoView({ behavior: 'smooth' })}
+                        <motion.span variants={fadeIn} className="eyebrow">
+                            Jepixo &middot; Pune, India
+                        </motion.span>
+                        <motion.h1
+                            variants={fadeIn}
+                            className="gradient-text"
+                            style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.05 }}
                         >
-                            Explore Jepixo Suite
-                        </button>
-                        <button
-                            className="glass-card btn-secondary"
-                            onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
+                            Whatever you need <span className="primary-gradient-text">built, sold,</span> or branded.
+                        </motion.h1>
+                        <motion.p
+                            variants={fadeIn}
+                            style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', maxWidth: '640px', margin: '24px auto' }}
                         >
-                            See Our Products
-                        </button>
+                            Jepixo is a builder's studio out of Pune. One team, two branches — a services
+                            division that ships web, brand, and merch work, and a products division that
+                            builds software of its own.
+                        </motion.p>
+                        <motion.div variants={fadeIn} style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                            <button
+                                className="glass-card btn-primary"
+                                onClick={() => document.getElementById('suite')?.scrollIntoView({ behavior: 'smooth' })}
+                            >
+                                Explore Jepixo Suite
+                            </button>
+                            <button
+                                className="glass-card btn-secondary"
+                                onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}
+                            >
+                                See Our Products
+                            </button>
+                        </motion.div>
                     </motion.div>
                 </motion.div>
             </section>
 
             {/* JEPIXO SUITE */}
             <section id="suite" className="section-container suite-section">
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                >
+                <motion.div {...sectionReveal} style={{ position: 'relative', zIndex: 1 }}>
                     <div className="section-header">
                         <span className="eyebrow">The Services Branch</span>
                         <h2 className="gradient-text section-title">Jepixo Suite</h2>
@@ -152,14 +171,7 @@ function App() {
                         {services.map((service, index) => {
                             const Icon = serviceIcons[index % serviceIcons.length];
                             return (
-                                <motion.div
-                                    key={service.name}
-                                    initial={{ opacity: 0, y: 30 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: index * 0.1, duration: 0.5 }}
-                                    className="suite-card"
-                                >
+                                <TiltCard key={service.name} delay={index * 0.1} className="suite-card">
                                     <div className="suite-card-top">
                                         <div className="suite-card-icon">
                                             <Icon size={26} />
@@ -187,7 +199,7 @@ function App() {
                                             Visit {service.url.replace('https://', '')} <ArrowRight size={15} />
                                         </a>
                                     )}
-                                </motion.div>
+                                </TiltCard>
                             );
                         })}
                     </div>
@@ -196,12 +208,7 @@ function App() {
 
             {/* PRODUCTS */}
             <section id="products" className="section-container products-section">
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                >
+                <motion.div {...sectionReveal} style={{ position: 'relative', zIndex: 1 }}>
                     <div className="section-header">
                         <span className="eyebrow">The Products Branch</span>
                         <h2 className="gradient-text section-title">Products</h2>
@@ -212,13 +219,9 @@ function App() {
 
                     <div className="products-grid">
                         {products.map((product, index) => (
-                            <motion.div
+                            <TiltCard
                                 key={product.name}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                whileHover={{ y: -6 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.1, duration: 0.5 }}
+                                delay={index * 0.1}
                                 className={`glass-card product-card ${product.status === 'live' ? 'product-card-live' : ''}`}
                             >
                                 <span className={`status-badge ${product.status === 'live' ? 'status-live' : 'status-dev'}`}>
@@ -252,7 +255,7 @@ function App() {
                                         <span className="product-soon">More soon</span>
                                     )}
                                 </div>
-                            </motion.div>
+                            </TiltCard>
                         ))}
 
                         {/* Placeholder slot so the grid visibly has room to grow */}
@@ -266,13 +269,7 @@ function App() {
 
             {/* TELL US THE PROBLEM */}
             <section id="contact" className="section-container problem-section">
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                    className="problem-inner"
-                >
+                <motion.div {...sectionReveal} className="problem-inner">
                     <h2 className="gradient-text section-title">Tell Us The Problem.</h2>
                     <p className="section-sub" style={{ margin: '0 auto 40px' }}>
                         Website down? Need a POS? Uniforms for the whole staff by Friday? Start here —
@@ -308,12 +305,7 @@ function App() {
 
             {/* WORK */}
             <section id="work" className="section-container">
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                >
+                <motion.div {...sectionReveal}>
                     <div className="section-header">
                         <span className="eyebrow">Work</span>
                         <h2 className="gradient-text section-title">Selected Projects</h2>
@@ -321,12 +313,9 @@ function App() {
 
                     <div className="work-grid">
                         {caseStudies.map((study, index) => (
-                            <motion.div
+                            <TiltCard
                                 key={study.title + study.client}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.1, duration: 0.5 }}
+                                delay={index * 0.1}
                                 className={`glass-card work-card ${study.isPlaceholder ? 'work-card-placeholder' : ''}`}
                             >
                                 <div className="tech-stack" style={{ marginBottom: '16px' }}>
@@ -342,7 +331,7 @@ function App() {
                                         View site <ArrowRight size={16} />
                                     </a>
                                 )}
-                            </motion.div>
+                            </TiltCard>
                         ))}
                     </div>
                 </motion.div>
@@ -350,13 +339,7 @@ function App() {
 
             {/* ABOUT */}
             <section id="about" className="section-container about-section">
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                    className="about-inner"
-                >
+                <motion.div {...sectionReveal} className="about-inner">
                     <div className="section-header" style={{ textAlign: 'left', margin: 0 }}>
                         <span className="eyebrow">About</span>
                         <h2 className="gradient-text section-title" style={{ textAlign: 'left' }}>
