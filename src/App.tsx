@@ -8,11 +8,12 @@ import {
     Globe,
     Palette,
     Shirt,
+    Video,
     ArrowRight,
     Send,
 } from 'lucide-react';
 import Scene from './components/Scene';
-import { services } from './data/services';
+import { services, suiteUrl } from './data/services';
 import { products } from './data/products';
 import { caseStudies } from './data/caseStudies';
 import './index.css';
@@ -31,7 +32,13 @@ const staggerContainer = {
     },
 };
 
-const serviceIcons = [Globe, Palette, Shirt];
+const serviceIcons = [Globe, Palette, Video, Shirt];
+
+const statusLabel: Record<string, string> = {
+    live: 'Live',
+    'in-progress': 'In Progress',
+    'coming-soon': 'Coming Soon',
+};
 
 function App() {
     const [problem, setProblem] = useState('');
@@ -131,6 +138,14 @@ function App() {
                             Whatever the ask, our services team gets it designed, built, and delivered — one
                             coherent studio behind it, not a list of disconnected freelancers.
                         </p>
+                        <a
+                            href={suiteUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="suite-visit-link"
+                        >
+                            Visit suite.jepixo.in <ExternalLink size={15} />
+                        </a>
                     </div>
 
                     <div className="suite-grid">
@@ -138,17 +153,23 @@ function App() {
                             const Icon = serviceIcons[index % serviceIcons.length];
                             return (
                                 <motion.div
-                                    key={service.title}
+                                    key={service.name}
                                     initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: index * 0.1, duration: 0.5 }}
                                     className="suite-card"
                                 >
-                                    <div className="suite-card-icon">
-                                        <Icon size={26} />
+                                    <div className="suite-card-top">
+                                        <div className="suite-card-icon">
+                                            <Icon size={26} />
+                                        </div>
+                                        <span className={`status-badge status-${service.status}`}>
+                                            {statusLabel[service.status]}
+                                        </span>
                                     </div>
-                                    <h3 className="h4">{service.title}</h3>
+                                    <h3 className="h4">{service.name}</h3>
+                                    <p className="suite-card-category">{service.category}</p>
                                     <p className="suite-card-tagline">{service.tagline}</p>
                                     <p className="suite-card-desc">{service.description}</p>
                                     <ul className="suite-card-list">
@@ -156,6 +177,16 @@ function App() {
                                             <li key={item}>{item}</li>
                                         ))}
                                     </ul>
+                                    {service.status === 'live' && service.url && (
+                                        <a
+                                            href={service.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="suite-card-link"
+                                        >
+                                            Visit {service.url.replace('https://', '')} <ArrowRight size={15} />
+                                        </a>
+                                    )}
                                 </motion.div>
                             );
                         })}
